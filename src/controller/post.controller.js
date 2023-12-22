@@ -53,6 +53,7 @@ postController.getPostAll = async (req, res, next) => {
 
     try {
         const selectPostSql = `SELECT
+                                    title AS title,
                                     post_idx AS "postIdx",
                                     user_tb.user_idx AS "userIdx",
                                     nickname,
