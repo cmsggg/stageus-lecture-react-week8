@@ -8,11 +8,11 @@ const validator = require('../utils/validator');
 const authController = {};
 
 /** 로그인하기
- * 
- * @param {import('express').Request} req 
- * @param {import('express').Response} res 
- * @param {import('express').NextFunction} next 
- * @returns 
+ *
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @param {import('express').NextFunction} next
+ * @returns
  */
 authController.login = async (req, res, next) => {
     const id = req.body.id;
@@ -20,10 +20,8 @@ authController.login = async (req, res, next) => {
 
     const result = new Result();
 
-    if (!validator(id).isString().length(6, 16).end())
-        return next(new BadRequestException('아이디 형식이 올바르지 않습니다.'));
-    if (!validator(pw).isString().testRegExp(pwRegExp).end())
-        return next(new BadRequestException('비밀번호 형식이 올바르지 않습니다.'));
+    if (!validator(id).isString().length(6, 16).end()) return next(new BadRequestException('아이디 형식이 올바르지 않습니다.'));
+    if (!validator(pw).isString().testRegExp(pwRegExp).end()) return next(new BadRequestException('비밀번호 형식이 올바르지 않습니다.'));
 
     try {
         const selectUserSql = `SELECT
@@ -37,14 +35,8 @@ authController.login = async (req, res, next) => {
                                     deleted_at IS NULL`;
         const selectUserResult = await pgPool.query(selectUserSql, [id]);
 
-        if (!selectUserResult.rowCount)
-            return next(new BadRequestException('존재하지 않는 아이디입니다.'));
-        if (!compareHash(pw, selectUserResult.rows[0].pw))
-            return next(new BadRequestException('아이디 또는 비밀번호가 잘못되었습니다.'));
-
-        const token = createToken({
-            userIdx: selectUserResult.rows[0].userIdx
-        });
+        if (!selectUserResult.rowCount) return next(new BadRequestException('존재하지 않는 아이디입니다.'));
+        if (!compareHash(pw, selectUserResult.rows[0].pw)) return next(new BadRequestException('아이디 또는 비밀번호가 잘못되었습니다.'));
 
         result.data.token = token;
     } catch (err) {
@@ -52,6 +44,6 @@ authController.login = async (req, res, next) => {
     }
 
     res.status(result.status).send(result);
-}
+};
 
 module.exports = authController;
