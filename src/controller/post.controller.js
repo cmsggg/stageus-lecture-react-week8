@@ -5,11 +5,11 @@ const pgPool = require('../utils/pgPool');
 const validator = require('../utils/validator');
 
 /** 게시글 생성하기
- * 
- * @param {import('express').Request} req 
- * @param {import('express').Response} res 
- * @param {import('express').NextFunction} next 
- * @returns 
+ *
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @param {import('express').NextFunction} next
+ * @returns
  */
 postController.createPost = async (req, res, next) => {
     const loginUserIdx = req.userIdx;
@@ -18,8 +18,7 @@ postController.createPost = async (req, res, next) => {
 
     const result = new Result();
 
-    if (!validator(title).isString().length(2, 32).end())
-        return next(new BadRequestException('title 형식이 올바르지 않습니다.'));
+    if (!validator(title).isString().length(2, 32).end()) return next(new BadRequestException('title 형식이 올바르지 않습니다.'));
 
     try {
         const insertPostSql = `INSERT INTO post_tb
@@ -36,26 +35,26 @@ postController.createPost = async (req, res, next) => {
     }
 
     res.status(result.status).send(result);
-}
+};
 
-/** 게시글 생성하기
- * 
- * @param {import('express').Request} req 
- * @param {import('express').Response} res 
- * @param {import('express').NextFunction} next 
- * @returns 
+/** 게시글 목록 가져오기
+ *
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @param {import('express').NextFunction} next
+ * @returns
  */
 postController.getPostAll = async (req, res, next) => {
     const page = Number(req.query.page || 1);
 
     const result = new Result();
 
-    if (!validator(page).isNumber().range(1).end())
-        return next(new BadRequestException('page는 1 이상이어야 합니다.'));
+    if (!validator(page).isNumber().range(1).end()) return next(new BadRequestException('page는 1 이상이어야 합니다.'));
 
     try {
         const selectPostSql = `SELECT
                                     post_idx AS "postIdx",
+                                    title AS title,
                                     user_tb.user_idx AS "userIdx",
                                     nickname,
                                     profile_img AS "profileImgPath",
@@ -85,6 +84,6 @@ postController.getPostAll = async (req, res, next) => {
     }
 
     res.status(result.status).send(result);
-}
+};
 
 module.exports = postController;
