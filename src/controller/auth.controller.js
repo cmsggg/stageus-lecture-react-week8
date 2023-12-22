@@ -38,6 +38,10 @@ authController.login = async (req, res, next) => {
         if (!selectUserResult.rowCount) return next(new BadRequestException('존재하지 않는 아이디입니다.'));
         if (!compareHash(pw, selectUserResult.rows[0].pw)) return next(new BadRequestException('아이디 또는 비밀번호가 잘못되었습니다.'));
 
+        const token = createToken({
+            userIdx: selectUserResult.rows[0].userIdx,
+        });
+
         result.data.token = token;
     } catch (err) {
         return next(new InternalServerErrorException('예상하지 못한 에러가 발생했습니다.', err));
