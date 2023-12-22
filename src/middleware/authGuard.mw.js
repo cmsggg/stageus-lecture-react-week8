@@ -4,17 +4,16 @@ const { verifyToken } = require('../utils/token');
 const authGuard = {};
 
 /** 로그인 인증 미들웨어
- * 
- * @param {import('express').Request} req 
- * @param {import('express').Response} res 
- * @param {import('express').NextFunction} next 
- * @returns 
+ *
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @param {import('express').NextFunction} next
+ * @returns
  */
 authGuard.loginAuthGuard = async (req, res, next) => {
-    const token = req.cookies.token;
+    const token = req.headers.authorization;
 
-    if (!token)
-        return next(new UnauthorizedException('토큰이 존재하지 않습니다.'));
+    if (!token) return next(new UnauthorizedException('토큰이 존재하지 않습니다.'));
 
     const verifiedResult = verifyToken(token);
 
@@ -35,8 +34,7 @@ authGuard.loginAuthGuard = async (req, res, next) => {
                                     user_tb.deleted_at IS NULL`;
         const selectUserResult = await pgPool.query(selectUserSql, [loginUserIdx]);
 
-        if (!selectUserResult.rows[0])
-            return next(new UnauthorizedException('사용자를 찾을 수 없습니다.'));
+        if (!selectUserResult.rows[0]) return next(new UnauthorizedException('사용자를 찾을 수 없습니다.'));
 
         req.userIdx = loginUserIdx;
     } catch (err) {
@@ -44,6 +42,6 @@ authGuard.loginAuthGuard = async (req, res, next) => {
     }
 
     next();
-}
+};
 
 module.exports = authGuard;
