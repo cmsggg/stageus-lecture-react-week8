@@ -6,7 +6,7 @@ const fs = require('fs');
 const env = require('./env');
 const path = require('path');
 
-/** 
+/**
  * @type {multer.Options}
  */
 multerConfig.profileImgUploadMulterConfig = {
@@ -15,14 +15,16 @@ multerConfig.profileImgUploadMulterConfig = {
             const uploadDestinationPath = path.join(env.UPLOAD_DIRECTORY, 'profile');
 
             if (!fs.existsSync(uploadDestinationPath))
-                fs.mkdirSync(uploadDestinationPath);
+                fs.mkdirSync(uploadDestinationPath, {
+                    recursive: true,
+                });
 
             done(null, uploadDestinationPath);
         },
         filename(req, file, done) {
             const fileName = `img_${new Date().getTime()}-${random.numberString(6)}.png`;
             done(null, fileName);
-        }
+        },
     }),
     fileFilter(req, file, done) {
         if (!(file.mimetype == 'image/png' || file.mimetype == 'image/jpg' || file.mimetype == 'image/jpeg' || file.mimetype == 'image/gif')) {
@@ -32,11 +34,11 @@ multerConfig.profileImgUploadMulterConfig = {
         done(null, true);
     },
     limits: {
-        fileSize: 1 * 1024 * 1024 // ( 1MB )
-    }
+        fileSize: 1 * 1024 * 1024, // ( 1MB )
+    },
 };
 
-/** 
+/**
  * @type {multer.Options}
  */
 multerConfig.videoThumbnailUploadMulterConfig = {
@@ -45,14 +47,16 @@ multerConfig.videoThumbnailUploadMulterConfig = {
             const uploadDestinationPath = path.join(env.UPLOAD_DIRECTORY, 'thumbnail');
 
             if (!fs.existsSync(uploadDestinationPath))
-                fs.mkdirSync(uploadDestinationPath);
+                fs.mkdirSync(uploadDestinationPath, {
+                    recursive: true,
+                });
 
             done(null, uploadDestinationPath);
         },
         filename(req, file, done) {
             const fileName = `img_${new Date().getTime()}-${random.numberString(6)}.png`;
             done(null, fileName);
-        }
+        },
     }),
     fileFilter(req, file, done) {
         if (!(file.mimetype == 'image/png' || file.mimetype == 'image/jpg' || file.mimetype == 'image/jpeg' || file.mimetype == 'image/gif')) {
@@ -62,8 +66,8 @@ multerConfig.videoThumbnailUploadMulterConfig = {
         done(null, true);
     },
     limits: {
-        fileSize: 1 * 1024 * 1024 // ( 1MB )
-    }
+        fileSize: 1 * 1024 * 1024, // ( 1MB )
+    },
 };
 
 module.exports = multerConfig;
